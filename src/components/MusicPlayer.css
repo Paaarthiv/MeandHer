@@ -1,0 +1,43 @@
+.music-player-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+}
+
+.music-toggle-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+
+.music-toggle-btn:hover {
+    background-color: #fff;
+    border-color: var(--color-accent-gold);
+    color: var(--color-accent-gold);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.music-toggle-btn.playing {
+    border-color: rgba(212, 175, 55, 0.3);
+    color: var(--color-text-main);
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+    .music-player-container {
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+}

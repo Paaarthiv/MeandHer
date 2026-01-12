@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Premium Palette */
+  --color-bg: #FAFAF9; /* Stone-50 */
+  --color-text-main: #292524; /* Stone-800 */
+  --color-text-muted: #78716C; /* Stone-500 */
+  --color-accent-gold: #D4AF37; /* Classic Gold */
+  --color-soft-rose: #F5E6E8; /* Very subtle pink */
+  --color-paper: #FFFFFF;
+  
+  --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.05);
+  --shadow-hover: 0 20px 40px -12px rgba(0,0,0,0.1);
+  
+  --trans-default: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--color-text-main);
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+section {
+  padding: 6rem 1rem;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  section {
+    padding: 8rem 2rem;
+  }
+}

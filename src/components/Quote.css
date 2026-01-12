@@ -1,0 +1,40 @@
+.quote-section {
+    min-height: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-bg);
+    /* Optional: Could add a subtle texture or gradient here */
+    background: radial-gradient(circle at center, #ffffff 0%, #f7f5f2 100%);
+    padding: 4rem 1rem;
+}
+
+.quote-container {
+    max-width: 800px;
+    text-align: center;
+}
+
+.quote-section blockquote {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    line-height: 1.4;
+    color: var(--color-text-main);
+    font-style: italic;
+}
+
+.site-footer {
+    padding: 3rem 1rem;
+    text-align: center;
+    background-color: #F5F5F4;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+    .quote-section blockquote {
+        font-size: 3.5rem;
+    }
+}

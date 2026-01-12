@@ -1,0 +1,105 @@
+.moments-section {
+    background-color: #FDFCF8;
+    /* Slightly warmer than base */
+}
+
+.moments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+}
+
+.moment-item {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.moment-item.odd {
+    flex-direction: row-reverse;
+}
+
+.moment-image-wrapper {
+    flex: 1;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.moment-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.moment-item:hover .moment-image {
+    transform: scale(1.03);
+}
+
+.moment-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* Default alignment */
+}
+
+.moment-item.even .moment-content {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.moment-item.odd .moment-content {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.moment-date {
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    color: var(--color-accent-gold);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.moment-caption {
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 2rem;
+    font-family: var(--font-heading);
+    color: var(--color-text-main);
+    max-width: 400px;
+}
+
+.line {
+    width: 80px;
+    height: 1px;
+    background-color: var(--color-text-muted);
+    opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+
+    .moment-item,
+    .moment-item.odd {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .moment-content,
+    .moment-item.even .moment-content,
+    .moment-item.odd .moment-content {
+        align-items: center;
+        text-align: center;
+        order: 2;
+        /* Text after image on mobile usually looks better or before? Let's keep after */
+    }
+
+    .moment-image-wrapper {
+        width: 100%;
+        order: 1;
+    }
+}

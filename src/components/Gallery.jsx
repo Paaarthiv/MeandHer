@@ -24,7 +24,17 @@ const initialImages = [
 const Gallery = () => {
     const [images, setImages] = useState(initialImages);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [isUnlocked, setIsUnlocked] = useState(false);
+
+    // Initialize unlock state from storage (persists on refresh)
+    const [isUnlocked, setIsUnlocked] = useState(() => {
+        return sessionStorage.getItem('gallery_unlocked') === 'true';
+    });
+
+    // Wrapper to update state and storage
+    const handleSetUnlocked = (status) => {
+        setIsUnlocked(status);
+        sessionStorage.setItem('gallery_unlocked', status);
+    };
 
     useEffect(() => {
         fetchMemories();
@@ -153,7 +163,7 @@ const Gallery = () => {
                     <SecretUpload
                         onUploadSuccess={handleUploadSuccess}
                         isUnlocked={isUnlocked}
-                        onUnlock={setIsUnlocked}
+                        onUnlock={handleSetUnlocked}
                     />
                 </div>
 

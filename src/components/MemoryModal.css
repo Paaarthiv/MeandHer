@@ -172,7 +172,29 @@
     }
 
     .memory-date-input,
-    .memory-caption-input {
+    .memory-caption-input,
+    .memory-date-display,
+    .memory-caption-display {
         text-align: left;
     }
+}
+
+.memory-date-display {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    color: var(--color-accent-gold);
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.memory-caption-display {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--color-text-main);
+    text-align: center;
+    line-height: 1.4;
+    margin-bottom: 1rem;
 }

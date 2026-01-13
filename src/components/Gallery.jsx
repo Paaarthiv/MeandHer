@@ -24,6 +24,7 @@ const initialImages = [
 const Gallery = () => {
     const [images, setImages] = useState(initialImages);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [isUnlocked, setIsUnlocked] = useState(false);
 
     useEffect(() => {
         fetchMemories();
@@ -116,7 +117,11 @@ const Gallery = () => {
                 </div>
 
                 <div className="upload-container">
-                    <SecretUpload onUploadSuccess={handleUploadSuccess} />
+                    <SecretUpload
+                        onUploadSuccess={handleUploadSuccess}
+                        isUnlocked={isUnlocked}
+                        onUnlock={setIsUnlocked}
+                    />
                 </div>
 
                 <MemoryModal
@@ -124,6 +129,7 @@ const Gallery = () => {
                     onClose={() => setSelectedImage(null)}
                     image={selectedImage}
                     onUpdate={handleUpdateImage}
+                    canEdit={isUnlocked && typeof selectedImage?.id === 'number'}
                 />
             </div>
         </section>

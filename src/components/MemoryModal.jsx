@@ -1,9 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save } from 'lucide-react';
-import './MemoryModal.css';
-
-const MemoryModal = ({ isOpen, onClose, image, onUpdate }) => {
+const MemoryModal = ({ isOpen, onClose, image, onUpdate, canEdit }) => {
     const [date, setDate] = useState('');
     const [caption, setCaption] = useState('');
 
@@ -15,7 +10,7 @@ const MemoryModal = ({ isOpen, onClose, image, onUpdate }) => {
     }, [image]);
 
     const handleSave = () => {
-        if (image) {
+        if (image && canEdit) {
             onUpdate(image.id, { date, caption });
             onClose();
         }
@@ -48,31 +43,41 @@ const MemoryModal = ({ isOpen, onClose, image, onUpdate }) => {
                     </div>
 
                     <div className="modal-details">
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                placeholder="Date to be added"
-                                className="memory-date-input"
-                            />
-                        </div>
+                        {canEdit ? (
+                            <>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        placeholder="Date to be added"
+                                        className="memory-date-input"
+                                    />
+                                </div>
 
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                value={caption}
-                                onChange={(e) => setCaption(e.target.value)}
-                                placeholder="Add a caption..."
-                                className="memory-caption-input"
-                            />
-                        </div>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        value={caption}
+                                        onChange={(e) => setCaption(e.target.value)}
+                                        placeholder="Add a caption..."
+                                        className="memory-caption-input"
+                                    />
+                                </div>
 
-                        <div className="save-indicator">
-                            <button onClick={handleSave} className="save-btn">
-                                <Save size={16} /> Save Memory
-                            </button>
-                        </div>
+                                <div className="save-indicator">
+                                    <button onClick={handleSave} className="save-btn">
+                                        <Save size={16} /> Save Memory
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            // Read-only View
+                            <>
+                                {date && <p className="memory-date-display">{date}</p>}
+                                {caption && <p className="memory-caption-display">{caption}</p>}
+                            </>
+                        )}
                     </div>
                 </motion.div>
             </motion.div>

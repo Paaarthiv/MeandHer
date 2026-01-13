@@ -4,10 +4,9 @@ import { Lock, Upload, Key, Check, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import './SecretUpload.css';
 
-const SecretUpload = ({ onUploadSuccess }) => {
+const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [passcode, setPasscode] = useState('');
-    const [isUnlocked, setIsUnlocked] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState(false);
 
@@ -16,7 +15,7 @@ const SecretUpload = ({ onUploadSuccess }) => {
     const handleUnlock = (e) => {
         e.preventDefault();
         if (passcode === SECRET_CODE) {
-            setIsUnlocked(true);
+            onUnlock(true); // Lift state up
             setError(false);
         } else {
             setError(true);

@@ -24,6 +24,7 @@ const initialImages = [
 const Gallery = () => {
     const [images, setImages] = useState(initialImages);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [connectionError, setConnectionError] = useState(false);
 
     // Initialize unlock state from storage (persists on refresh)
     const [isUnlocked, setIsUnlocked] = useState(() => {
@@ -50,11 +51,12 @@ const Gallery = () => {
 
         if (error) {
             console.error('Error fetching memories:', error);
-            // alert('Error fetching memories from database');
+            setConnectionError(true);
             return;
         }
 
         if (data) {
+            setConnectionError(false);
             const dbImages = data.map(m => ({
                 id: m.id,
                 src: m.image_url,
@@ -172,6 +174,17 @@ const Gallery = () => {
                         isUnlocked={isUnlocked}
                         onUnlock={handleSetUnlocked}
                     />
+                    {isUnlocked && (
+                        <p style={{
+                            textAlign: 'center',
+                            fontSize: '0.7rem',
+                            color: connectionError ? '#ef4444' : '#22c55e',
+                            marginTop: '0.5rem',
+                            fontFamily: 'monospace'
+                        }}>
+                            {connectionError ? 'Database Error' : 'Cloud Connected'}
+                        </p>
+                    )}
                 </div>
 
                 <MemoryModal

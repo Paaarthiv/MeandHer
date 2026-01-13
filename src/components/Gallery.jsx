@@ -30,6 +30,7 @@ const Gallery = () => {
     }, []);
 
     const fetchMemories = async () => {
+        if (!supabase) return;
         const { data, error } = await supabase
             .from('memories')
             .select('*')
@@ -69,7 +70,7 @@ const Gallery = () => {
         setSelectedImage(prev => prev && prev.id === id ? { ...prev, ...newData } : prev);
 
         // If it's a DB image (numeric ID), update Supabase
-        if (typeof id === 'number') {
+        if (typeof id === 'number' && supabase) {
             await supabase
                 .from('memories')
                 .update({ date: newData.date, caption: newData.caption })

@@ -29,6 +29,11 @@ const SecretUpload = ({ onUploadSuccess }) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        if (!supabase) {
+            alert("Backend not connected. Supabase URL missing.");
+            return;
+        }
+
         setIsUploading(true);
         try {
             const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
@@ -60,7 +65,7 @@ const SecretUpload = ({ onUploadSuccess }) => {
         } catch (err) {
             console.error('Upload failed:', err);
             setIsUploading(false);
-            alert('Upload failed. unique constraint? storage limit?');
+            alert('Upload failed. Check console for details.');
         }
     };
 

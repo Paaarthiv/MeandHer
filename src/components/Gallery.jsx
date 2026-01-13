@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload } from 'lucide-react';
 import { supabase } from '../lib/supabase'; // Import supabase client
 import MemoryModal from './MemoryModal';
 import SecretUpload from './SecretUpload'; // Import SecretUpload
@@ -26,18 +25,36 @@ const Gallery = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [connectionError, setConnectionError] = useState(false);
 
-    // Initialize unlock state from storage (persists on refresh)
+    // Initialize unlock state from localStorage (persists across sessions/refreshes)
     const [isUnlocked, setIsUnlocked] = useState(() => {
-        return sessionStorage.getItem('gallery_unlocked') === 'true';
+        try {
+            return localStorage.getItem('gallery_unlocked') === 'true';
+        } catch (e) {
+            return false;
+        }
     });
+
+    // Helper to check if image is from DB or Local
+    const isDbImage = (id) => {
+        return !String(id).startsWith('local-');
+    };
 
     // Wrapper to update state and storage
     const handleSetUnlocked = (status) => {
         setIsUnlocked(status);
-        sessionStorage.setItem('gallery_unlocked', status);
+        try {
+            localStorage.setItem('gallery_unlocked', status);
+        } catch (e) {
+            console.warn('LocalStorage failed:', e);
+        }
     };
 
     useEffect(() => {
+        // Validation check for Supabase connection
+        if (!supabase) {
+            setConnectionError(true);
+            return;
+        }
         fetchMemories();
     }, []);
 
@@ -89,12 +106,21 @@ const Gallery = () => {
         ));
         setSelectedImage(prev => prev && prev.id === id ? { ...prev, ...newData } : prev);
 
-        // If it's a DB image (numeric ID), update Supabase
-        if (typeof id === 'number' && supabase) {
-            await supabase
+        // Update Supabase if it's a DB image
+        if (isDbImage(id) && supabase) {
+            const { error } = await supabase
                 .from('memories')
                 .update({ date: newData.date, caption: newData.caption })
                 .eq('id', id);
+
+            if (error) {
+                console.error("Update failed:", error);
+                alert("Failed to save changes. Please try again.");
+            } else {
+                // Optional: alert("Memory saved!");
+            }
+        } else if (isDbImage(id) && !supabase) {
+            alert("Cannot save: Database not connected. Check console.");
         }
     };
 
@@ -105,8 +131,8 @@ const Gallery = () => {
         setImages(prev => prev.filter(img => img.id !== id));
         setSelectedImage(null);
 
-        // If it's a DB image (numeric ID), delete from Supabase
-        if (typeof id === 'number' && supabase) {
+        // Delete from Supabase if it's a DB image
+        if (isDbImage(id) && supabase) {
             try {
                 // 1. Delete record from table
                 const { error: tableError } = await supabase
@@ -116,8 +142,7 @@ const Gallery = () => {
 
                 if (tableError) throw tableError;
 
-                // 2. Delete file from storage (optional but good practice)
-                // Extract filename from URL: .../gallery-images/filename.jpg
+                // 2. Delete file from storage
                 const fileName = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
                 if (fileName) {
                     await supabase.storage
@@ -126,8 +151,10 @@ const Gallery = () => {
                 }
             } catch (err) {
                 console.error("Error deleting memory:", err);
-                alert("Failed to delete from database.");
+                alert("Failed to delete from database. It may reappear on refresh.");
             }
+        } else if (isDbImage(id) && !supabase) {
+            alert("Cannot delete from database: disconnected.");
         }
     };
 
@@ -174,15 +201,17 @@ const Gallery = () => {
                         isUnlocked={isUnlocked}
                         onUnlock={handleSetUnlocked}
                     />
-                    {isUnlocked && (
+                    {/* Visual Connection Status Indicator */}
+                    {(isUnlocked || connectionError) && (
                         <p style={{
                             textAlign: 'center',
                             fontSize: '0.7rem',
                             color: connectionError ? '#ef4444' : '#22c55e',
                             marginTop: '0.5rem',
-                            fontFamily: 'monospace'
+                            fontFamily: 'monospace',
+                            opacity: 0.8
                         }}>
-                            {connectionError ? 'Database Error' : 'Cloud Connected'}
+                            {connectionError ? 'Database Connection Error' : 'Cloud Connected'}
                         </p>
                     )}
                 </div>

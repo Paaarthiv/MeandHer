@@ -186,7 +186,12 @@ const Gallery = () => {
                                 layout
                                 onClick={() => handleImageClick(image)}
                             >
-                                <img src={image.src} alt={image.caption || "Gallery Moment"} />
+                                <img
+                                    src={image.src}
+                                    alt={image.caption || "Gallery Moment"}
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                                 <div className="overlay">
                                     {image.date && <span className="overlay-date">{image.date}</span>}
                                 </div>

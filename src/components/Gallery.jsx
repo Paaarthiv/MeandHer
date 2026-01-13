@@ -129,7 +129,7 @@ const Gallery = () => {
                     onClose={() => setSelectedImage(null)}
                     image={selectedImage}
                     onUpdate={handleUpdateImage}
-                    canEdit={isUnlocked && typeof selectedImage?.id === 'number'}
+                    canEdit={isUnlocked}
                 />
             </div>
         </section>

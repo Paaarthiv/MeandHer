@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase'; // Import supabase client
 import MemoryModal from './MemoryModal';
 import SecretUpload from './SecretUpload'; // Import SecretUpload
+import LazyImage from './LazyImage'; // Import LazyImage
 import './Gallery.css';
 
 // Import initial images
@@ -186,11 +187,9 @@ const Gallery = () => {
                                 layout
                                 onClick={() => handleImageClick(image)}
                             >
-                                <img
+                                <LazyImage
                                     src={image.src}
                                     alt={image.caption || "Gallery Moment"}
-                                    loading="lazy"
-                                    decoding="async"
                                 />
                                 <div className="overlay">
                                     {image.date && <span className="overlay-date">{image.date}</span>}

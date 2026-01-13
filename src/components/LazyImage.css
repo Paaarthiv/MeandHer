@@ -1,0 +1,93 @@
+.lazy-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    min-height: 150px;
+    background-color: #f0f0f0;
+}
+
+.lazy-image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.5s ease, transform 0.7s ease;
+}
+
+.lazy-image-wrapper img.hidden {
+    opacity: 0;
+}
+
+.lazy-image-wrapper img.visible {
+    opacity: 1;
+}
+
+.lazy-image-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+/* Skeleton loading animation */
+.image-skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+    background-size: 200% 200%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* Error state */
+.image-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    color: #999;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+}
+
+/* Loaded state hides skeleton */
+.lazy-image-wrapper.loaded .image-skeleton {
+    display: none;
+}

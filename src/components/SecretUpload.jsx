@@ -25,7 +25,7 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
     };
 
     // Compress image using Canvas API (no external libraries needed)
-    const compressImage = (file, maxWidth = 1200, quality = 0.8) => {
+    const compressImage = (file, maxWidth = 1000, quality = 0.75) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);

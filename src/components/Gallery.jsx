@@ -96,7 +96,6 @@ const Gallery = () => {
     };
 
     const handleImageClick = (image) => {
-        console.log("Clicked Image:", image, "Unlocked:", isUnlocked);
         setSelectedImage(image);
     };
 

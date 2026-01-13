@@ -74,7 +74,9 @@ const MemoryModal = ({ isOpen, onClose, image, onUpdate, canEdit }) => {
                         ) : (
                             // Read-only View
                             <>
-                                {date && <p className="memory-date-display">{date}</p>}
+                                <p className="memory-date-display">
+                                    {date || "Date to be added"}
+                                </p>
                                 {caption && <p className="memory-caption-display">{caption}</p>}
                             </>
                         )}

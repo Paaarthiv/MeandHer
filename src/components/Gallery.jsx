@@ -42,10 +42,17 @@ const Gallery = () => {
 
     const fetchMemories = async () => {
         if (!supabase) return;
+
         const { data, error } = await supabase
             .from('memories')
             .select('*')
             .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching memories:', error);
+            // alert('Error fetching memories from database');
+            return;
+        }
 
         if (data) {
             const dbImages = data.map(m => ({

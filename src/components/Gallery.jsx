@@ -79,6 +79,39 @@ const Gallery = () => {
         }
     };
 
+    const handleDeleteImage = async (id, imageUrl) => {
+        if (!confirm("Are you sure you want to delete this memory? This action cannot be undone.")) return;
+
+        // Optimistic update
+        setImages(prev => prev.filter(img => img.id !== id));
+        setSelectedImage(null);
+
+        // If it's a DB image (numeric ID), delete from Supabase
+        if (typeof id === 'number' && supabase) {
+            try {
+                // 1. Delete record from table
+                const { error: tableError } = await supabase
+                    .from('memories')
+                    .delete()
+                    .eq('id', id);
+
+                if (tableError) throw tableError;
+
+                // 2. Delete file from storage (optional but good practice)
+                // Extract filename from URL: .../gallery-images/filename.jpg
+                const fileName = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
+                if (fileName) {
+                    await supabase.storage
+                        .from('gallery-images')
+                        .remove([fileName]);
+                }
+            } catch (err) {
+                console.error("Error deleting memory:", err);
+                alert("Failed to delete from database.");
+            }
+        }
+    };
+
     return (
         <section className="gallery-section">
             <div className="container">
@@ -129,6 +162,7 @@ const Gallery = () => {
                     onClose={() => setSelectedImage(null)}
                     image={selectedImage}
                     onUpdate={handleUpdateImage}
+                    onDelete={handleDeleteImage}
                     canEdit={isUnlocked}
                 />
             </div>

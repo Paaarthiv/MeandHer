@@ -14,6 +14,7 @@ alter table memories enable row level security;
 drop policy if exists "Enable read access for all users" on memories;
 drop policy if exists "Enable insert for everyone" on memories;
 drop policy if exists "Enable update for everyone" on memories;
+drop policy if exists "Enable delete for everyone" on memories;
 
 create policy "Enable read access for all users"
 on memories for select
@@ -27,28 +28,37 @@ create policy "Enable update for everyone"
 on memories for update
 using (true);
 
+create policy "Enable delete for everyone"
+on memories for delete
+using (true);
+
 -- 3. Create the Storage Bucket ('gallery-images') via SQL
--- Note: This is usually done in the UI, but we can do it here too!
 insert into storage.buckets (id, name, public)
 values ('gallery-images', 'gallery-images', true)
 on conflict (id) do nothing;
 
 -- 4. Set up Storage Policies (IMPORTANT!)
--- Drop existing policies to avoid conflicts
 drop policy if exists "Public Access" on storage.objects;
 drop policy if exists "Public Upload" on storage.objects;
+drop policy if exists "Public Update" on storage.objects;
+drop policy if exists "Public Delete" on storage.objects;
 
--- Allow public access to view images
+-- Allow public access
 create policy "Public Access"
 on storage.objects for select
 using ( bucket_id = 'gallery-images' );
 
--- Allow anyone to upload (since we gate it via passcode on frontend)
+-- Allow upload
 create policy "Public Upload"
 on storage.objects for insert
 with check ( bucket_id = 'gallery-images' );
 
--- Allow updates too (optional but good for overwrites)
+-- Allow updates
 create policy "Public Update"
 on storage.objects for update
+using ( bucket_id = 'gallery-images' );
+
+-- Allow delete
+create policy "Public Delete"
+on storage.objects for delete
 using ( bucket_id = 'gallery-images' );

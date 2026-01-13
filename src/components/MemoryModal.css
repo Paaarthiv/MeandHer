@@ -198,3 +198,18 @@
     line-height: 1.4;
     margin-bottom: 1rem;
 }
+
+.delete-btn {
+    margin-left: 1rem;
+    color: #ef4444;
+    /* Red color */
+    opacity: 0.6;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    color: #dc2626;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-radius: 4px;
+    padding: 0 0.5rem;
+}

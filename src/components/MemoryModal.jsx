@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save } from 'lucide-react';
+import { X, Save, Trash2 } from 'lucide-react';
 import './MemoryModal.css';
 
-const MemoryModal = ({ isOpen, onClose, image, onUpdate, canEdit }) => {
+const MemoryModal = ({ isOpen, onClose, image, onUpdate, onDelete, canEdit }) => {
     const [date, setDate] = useState('');
     const [caption, setCaption] = useState('');
 
@@ -74,6 +74,15 @@ const MemoryModal = ({ isOpen, onClose, image, onUpdate, canEdit }) => {
                                     <button onClick={handleSave} className="save-btn">
                                         <Save size={16} /> Save Memory
                                     </button>
+                                    {onDelete && (
+                                        <button
+                                            onClick={() => onDelete(image.id, image.src)}
+                                            className="save-btn delete-btn"
+                                            title="Delete Memory"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
                                 </div>
                             </>
                         ) : (

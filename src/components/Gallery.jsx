@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload } from 'lucide-react';
+import { supabase } from '../lib/supabase'; // Import supabase client
 import MemoryModal from './MemoryModal';
+import SecretUpload from './SecretUpload'; // Import SecretUpload
 import './Gallery.css';
 
 // Import initial images
@@ -12,39 +14,67 @@ import img4 from '../assets/images/moment4.jpg';
 import img5 from '../assets/images/moment5.jpg';
 
 const initialImages = [
-    { id: 1, src: img1, date: '', caption: '' },
-    { id: 2, src: img2, date: '', caption: '' },
-    { id: 3, src: img3, date: '', caption: '' },
-    { id: 4, src: img4, date: '', caption: '' },
-    { id: 5, src: img5, date: '', caption: '' },
+    { id: 'local-1', src: img1, date: '', caption: '' },
+    { id: 'local-2', src: img2, date: '', caption: '' },
+    { id: 'local-3', src: img3, date: '', caption: '' },
+    { id: 'local-4', src: img4, date: '', caption: '' },
+    { id: 'local-5', src: img5, date: '', caption: '' },
 ];
 
 const Gallery = () => {
     const [images, setImages] = useState(initialImages);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const handleUpload = (event) => {
-        const files = event.target.files;
-        if (files) {
-            const newImages = Array.from(files).map((file, index) => ({
-                id: Date.now() + index,
-                src: URL.createObjectURL(file),
-                date: '',
-                caption: ''
+    useEffect(() => {
+        fetchMemories();
+    }, []);
+
+    const fetchMemories = async () => {
+        const { data, error } = await supabase
+            .from('memories')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (data) {
+            const dbImages = data.map(m => ({
+                id: m.id,
+                src: m.image_url,
+                date: m.date,
+                caption: m.caption
             }));
-            setImages(prev => [...prev, ...newImages]);
+            // Merge local and db images (db first)
+            setImages([...dbImages, ...initialImages]);
         }
+    };
+
+    const handleUploadSuccess = (newMemory) => {
+        const newImage = {
+            id: newMemory.id,
+            src: newMemory.image_url,
+            date: newMemory.date,
+            caption: newMemory.caption
+        };
+        setImages(prev => [newImage, ...prev]);
     };
 
     const handleImageClick = (image) => {
         setSelectedImage(image);
     };
 
-    const handleUpdateImage = (id, newData) => {
+    const handleUpdateImage = async (id, newData) => {
+        // Optimistic update
         setImages(prev => prev.map(img =>
             img.id === id ? { ...img, ...newData } : img
         ));
         setSelectedImage(prev => prev && prev.id === id ? { ...prev, ...newData } : prev);
+
+        // If it's a DB image (numeric ID), update Supabase
+        if (typeof id === 'number') {
+            await supabase
+                .from('memories')
+                .update({ date: newData.date, caption: newData.caption })
+                .eq('id', id);
+        }
     };
 
     return (
@@ -85,17 +115,14 @@ const Gallery = () => {
                 </div>
 
                 <div className="upload-container">
-                    <label className="upload-btn">
-                        <Upload size={18} />
-                        <span>Add more memories</span>
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleUpload}
-                            style={{ display: 'none' }}
-                        />
-                    </label>
+                    {/* Replaced local upload with SecretUpload */}
+                    <SecretUpload onUploadSuccess={handleUploadSuccess} />
+
+                    {/* Fallback/Hint text or old button style is inside SecretUpload now? 
+               Wait, SecretUpload currently renders a 'secret-dot'. 
+               I should tweak SecretUpload to look like the button below for clarity 
+               OR keep the button look via children.
+           */}
                 </div>
 
                 <MemoryModal

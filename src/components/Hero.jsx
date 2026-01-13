@@ -55,11 +55,12 @@ const Hero = () => {
 
       <motion.div
         className="scroll-indicator"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: [0, 10, 0] }}
+        transition={{
+          opacity: { delay: 2, duration: 1 },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+        }}
       >
         <span>↓</span>
       </motion.div>

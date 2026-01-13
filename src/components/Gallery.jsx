@@ -115,14 +115,7 @@ const Gallery = () => {
                 </div>
 
                 <div className="upload-container">
-                    {/* Replaced local upload with SecretUpload */}
                     <SecretUpload onUploadSuccess={handleUploadSuccess} />
-
-                    {/* Fallback/Hint text or old button style is inside SecretUpload now? 
-               Wait, SecretUpload currently renders a 'secret-dot'. 
-               I should tweak SecretUpload to look like the button below for clarity 
-               OR keep the button look via children.
-           */}
                 </div>
 
                 <MemoryModal

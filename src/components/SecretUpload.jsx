@@ -28,6 +28,12 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Validation: Block HEIC files
+        if (file.name.toLowerCase().endsWith('.heic') || file.type.includes('heic') || file.type.includes('heif')) {
+            alert("HEIC format is not supported by web browsers. Please upload a JPG or PNG.");
+            return;
+        }
+
         if (!supabase) {
             alert("Backend not connected. Supabase URL missing.");
             return;
@@ -35,7 +41,8 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
 
         setIsUploading(true);
         try {
-            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            // Clean filename
+            const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
 
             // 1. Upload to Storage
             const { data: uploadData, error: uploadError } = await supabase.storage
@@ -48,6 +55,8 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
             const { data: { publicUrl } } = supabase.storage
                 .from('gallery-images')
                 .getPublicUrl(fileName);
+
+            console.log("Uploaded Image URL:", publicUrl);
 
             // 3. Insert into Database
             const { data: dbData, error: dbError } = await supabase
@@ -64,7 +73,7 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
         } catch (err) {
             console.error('Upload failed:', err);
             setIsUploading(false);
-            alert('Upload failed. Check console for details.');
+            alert(`Upload failed: ${err.message}`);
         }
     };
 
@@ -125,7 +134,7 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
                                         <span>{isUploading ? "Uploading..." : "Select Photo"}</span>
                                         <input
                                             type="file"
-                                            accept="image/*"
+                                            accept="image/png, image/jpeg, image/jpg, image/webp"
                                             onChange={handleFileChange}
                                             disabled={isUploading}
                                             style={{ display: 'none' }}

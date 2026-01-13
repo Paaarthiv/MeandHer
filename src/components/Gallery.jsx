@@ -173,7 +173,7 @@ const Gallery = () => {
                     image={selectedImage}
                     onUpdate={handleUpdateImage}
                     onDelete={handleDeleteImage}
-                    canEdit={isUnlocked}
+                    canEdit={!!isUnlocked}
                 />
             </div>
         </section>

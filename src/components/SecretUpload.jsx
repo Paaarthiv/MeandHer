@@ -24,6 +24,49 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
         }
     };
 
+    // Compress image using Canvas API (no external libraries needed)
+    const compressImage = (file, maxWidth = 1200, quality = 0.8) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Scale down if larger than maxWidth
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Canvas compression failed'));
+                            }
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    };
+
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -41,13 +84,19 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
 
         setIsUploading(true);
         try {
+            // Compress the image before uploading
+            const compressedBlob = await compressImage(file);
+            const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '.jpg'), {
+                type: 'image/jpeg'
+            });
+
             // Clean filename
-            const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+            const fileName = `${Date.now()}-${compressedFile.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
 
             // 1. Upload to Storage
             const { data: uploadData, error: uploadError } = await supabase.storage
                 .from('gallery-images')
-                .upload(fileName, file);
+                .upload(fileName, compressedFile);
 
             if (uploadError) throw uploadError;
 
@@ -55,8 +104,6 @@ const SecretUpload = ({ onUploadSuccess, isUnlocked, onUnlock }) => {
             const { data: { publicUrl } } = supabase.storage
                 .from('gallery-images')
                 .getPublicUrl(fileName);
-
-            console.log("Uploaded Image URL:", publicUrl);
 
             // 3. Insert into Database
             const { data: dbData, error: dbError } = await supabase

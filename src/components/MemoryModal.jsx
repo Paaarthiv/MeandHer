@@ -1,3 +1,8 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Save } from 'lucide-react';
+import './MemoryModal.css';
+
 const MemoryModal = ({ isOpen, onClose, image, onUpdate, canEdit }) => {
     const [date, setDate] = useState('');
     const [caption, setCaption] = useState('');
